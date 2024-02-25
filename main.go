@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"os"
 
 	"go-aws-pass/internal/db"
 	sm "go-aws-pass/internal/secretsmanager"
@@ -16,12 +18,36 @@ type Person struct {
 	Age   int
 }
 
+func ReadFromConsole(consoleType string) string {
+	fmt.Println("Type /exit to exit")
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		text := scanner.Text()
+		if text == "/exit" {
+			os.Exit(0)
+		}
+		if consoleType == "table" {
+			return text
+		}
+		fmt.Println(scanner.Text()) // Println will add back the final '\n'
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "reading standard input:", err)
+	}
+
+	return ""
+}
+
 func main() {
-	d := db.CreateDatabase("person")
+	table := "persons"
+
+	d := db.CreateDatabase(table)
 	email := "kevin@homelabwithkevin.com"
 
 	p := Person{email, "kevin", 69}
-	db.WriteToDatabase(d, "person", db.Person(p))
+	db.WriteToDatabase(d, table, db.Person(p))
 
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 
@@ -51,5 +77,5 @@ func main() {
 		}
 	}
 
-	db.ReadFromDatabase(d, "person", email)
+	db.ReadFromDatabase(d, table, email)
 }
