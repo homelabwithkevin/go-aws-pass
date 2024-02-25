@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.25.2
 	github.com/aws/aws-sdk-go-v2/config v1.27.4
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.28.1
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.49.1
 	github.com/hashicorp/go-memdb v1.3.4
 )
 
@@ -23,4 +24,5 @@ require (
 	github.com/aws/smithy-go v1.20.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 )

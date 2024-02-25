@@ -8,6 +8,7 @@ import (
 
 	"go-aws-pass/internal/db"
 	sm "go-aws-pass/internal/secretsmanager"
+	ssm "go-aws-pass/internal/systemsmanager"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 )
@@ -24,12 +25,15 @@ func ReadFromConsole(consoleType string) string {
 
 	for scanner.Scan() {
 		text := scanner.Text()
+
 		if text == "/exit" {
 			os.Exit(0)
 		}
-		if consoleType == "table" {
+
+		if consoleType == "table" || consoleType == "ssm" {
 			return text
 		}
+
 		fmt.Println(scanner.Text()) // Println will add back the final '\n'
 	}
 
@@ -55,9 +59,20 @@ func main() {
 		panic(err)
 	}
 
-	featureSecretsManager := false
+	// Get user Input to Create SSM Parameter if flag is true
+	featureSSM := false
+	if featureSSM {
+		fmt.Printf("\nWhat SSM parameter name?\n")
+		parameterName := ReadFromConsole("ssm")
+
+		fmt.Printf("\nWhat SSM value?\n")
+		parameterValue := ReadFromConsole("ssm")
+
+		ssm.CreateParameter(cfg, parameterName, parameterValue)
+	}
 
 	// Retrieve Secret if Feature Flag is True
+	featureSecretsManager := false
 	if featureSecretsManager {
 		result := sm.ListSecrets(cfg)
 
