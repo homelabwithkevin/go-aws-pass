@@ -2,37 +2,18 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"go-aws-pass/internal/db"
+	sm "go-aws-pass/internal/secretsmanager"
 
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
 type Person struct {
 	Email string
 	Name  string
 	Age   int
-}
-
-func GetSecret(client *secretsmanager.Client, name string) map[string]interface{} {
-	input := &secretsmanager.GetSecretValueInput{
-		SecretId: &name,
-	}
-	result, err := client.GetSecretValue(context.TODO(), input)
-
-	if err != nil {
-		panic(err)
-	}
-
-	secretValue := string(*result.SecretString)
-
-	var secretMap map[string]interface{}
-	json.Unmarshal([]byte(secretValue), &secretMap)
-
-	return secretMap
 }
 
 func main() {
@@ -43,22 +24,17 @@ func main() {
 	db.WriteToDatabase(d, "person", db.Person(p))
 
 	cfg, err := config.LoadDefaultConfig(context.TODO())
+
 	if err != nil {
 		panic(err)
 	}
 
-	client := secretsmanager.NewFromConfig(cfg)
-	input := &secretsmanager.ListSecretsInput{}
-
-	result, err := client.ListSecrets(context.TODO(), input)
-	if err != nil {
-		panic(err)
-	}
+	result := sm.ListSecrets(cfg)
 
 	for _, v := range result.SecretList {
 		name := string(*v.Name)
 
-		secrets := GetSecret(client, name)
+		secrets := sm.GetSecret(cfg, name)
 
 		fmt.Printf("\n----------------------------\n")
 		fmt.Printf("Secret Name: %s", name)
