@@ -29,23 +29,27 @@ func main() {
 		panic(err)
 	}
 
-	result := sm.ListSecrets(cfg)
+	featureSecretsManager := false
 
-	for _, v := range result.SecretList {
-		name := string(*v.Name)
+	// Retrieve Secret if Feature Flag is True
+	if featureSecretsManager {
+		result := sm.ListSecrets(cfg)
 
-		secrets := sm.GetSecret(cfg, name)
+		for _, v := range result.SecretList {
+			name := string(*v.Name)
 
-		fmt.Printf("\n----------------------------\n")
-		fmt.Printf("Secret Name: %s", name)
-		fmt.Printf("\n----------------------------\n")
+			secrets := sm.GetSecret(cfg, name)
 
-		for i, v := range secrets {
-			fmt.Printf("Secret Key: %s %v", i, "\n")
-			fmt.Printf("Secret Value: %s %v", v, "\n\n")
+			fmt.Printf("\n----------------------------\n")
+			fmt.Printf("Secret Name: %s", name)
+			fmt.Printf("\n----------------------------\n")
+
+			for i, v := range secrets {
+				fmt.Printf("Secret Key: %s %v", i, "\n")
+				fmt.Printf("Secret Value: %s %v", v, "\n\n")
+			}
 		}
 	}
 
 	db.ReadFromDatabase(d, "person", email)
-
 }
