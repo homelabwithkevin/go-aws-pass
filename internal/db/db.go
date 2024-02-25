@@ -17,7 +17,7 @@ func CreateDatabase(table string) *memdb.MemDB {
 	schema := &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
 			table: {
-				Name: "person",
+				Name: table,
 				Indexes: map[string]*memdb.IndexSchema{
 					"id": {
 						Name:    "id",
