@@ -2,6 +2,7 @@
 Based on:
 - https://github.com/gopasspw/gopass
 - https://github.com/bnaydenov/ssmbrowse
+- https://github.com/rivo/tview/
 
 # Docs
 - https://docs.aws.amazon.com/sdk-for-go/api/service/secretsmanager

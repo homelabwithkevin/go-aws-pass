@@ -11,6 +11,8 @@ import (
 	ssm "go-aws-pass/internal/systemsmanager"
 
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 type Person struct {
@@ -97,4 +99,54 @@ func main() {
 		}
 	}
 
+	featureTView := true
+
+	if featureTView {
+		app := tview.NewApplication()
+
+		grid := tview.NewGrid().
+			SetRows(3, 0, 3).
+			SetColumns(30, 0, 30).
+			SetBorders(true)
+
+		// Header
+		searchPrefx := tview.NewInputField().SetLabel("Enter a search prefix: ")
+
+		searchPrefx.SetDoneFunc(func(key tcell.Key) {
+			if key == tcell.KeyEsc {
+				app.Stop()
+			}
+		})
+		grid.AddItem(searchPrefx, 0, 0, 1, 3, 0, 0, true)
+
+		// Main
+		table := tview.NewTable().
+			SetFixed(1, 6).
+			SetSelectable(true, false)
+		table.
+			SetBorder(true).
+			SetTitle("  Browser ").
+			SetBorderPadding(0, 0, 1, 1)
+
+		headers := [][]string{{"Name", "Type", "Version", "Last modified"}}
+		for row, line := range headers {
+			for col, text := range line {
+				cell := tview.NewTableCell(text)
+				table.SetCell(row+1, col, cell)
+			}
+		}
+
+		// Footer
+		leftFooterItem := tview.NewTextView()
+		grid.AddItem(leftFooterItem, 2, 0, 1, 3, 0, 0, false)
+		leftFooterItem.SetText("ESC/CTRL+C=Exit | TAB=Switch focus | ENTER=See details C=Copy value to clipboard | X=Copy name to clipboard")
+
+		// Layout for screens narrower than 100 cells (menu and side bar are hidden).
+		// Layout for screens wider than 100 cells.
+		grid.AddItem(table, 1, 0, 1, 3, 0, 0, false)
+
+		if err := app.SetRoot(grid, true).SetFocus(grid).Run(); err != nil {
+			panic(err)
+		}
+	}
 }
