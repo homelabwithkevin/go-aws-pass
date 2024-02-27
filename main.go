@@ -47,11 +47,16 @@ func ReadFromConsole(consoleType string) string {
 func main() {
 	table := "persons"
 
-	d := db.CreateDatabase(table)
-	email := "kevin@homelabwithkevin.com"
+	featureCreateDatabase := false
 
-	p := Person{email, "kevin", 69}
-	db.WriteToDatabase(d, table, db.Person(p))
+	if featureCreateDatabase {
+		d := db.CreateDatabase(table)
+		email := "kevin@homelabwithkevin.com"
+
+		p := Person{email, "kevin", 69}
+		db.WriteToDatabase(d, table, db.Person(p))
+		db.ReadFromDatabase(d, table, email)
+	}
 
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 
@@ -92,5 +97,4 @@ func main() {
 		}
 	}
 
-	db.ReadFromDatabase(d, table, email)
 }
