@@ -122,7 +122,7 @@ func main() {
 		// Main
 		table := tview.NewTable().
 			SetFixed(1, 6).
-			SetSelectable(true, false)
+			SetSelectable(false, false)
 		table.
 			SetBorder(true).
 			SetTitle("  Browser ").
@@ -132,6 +132,19 @@ func main() {
 		for row, line := range headers {
 			for col, text := range line {
 				cell := tview.NewTableCell(text)
+				table.SetCell(row+1, col, cell)
+			}
+		}
+
+		data := [][]string{
+			{"example", "secret", "1", "never"},
+			{"example1", "secret", "1", "never"},
+		}
+
+		for row, line := range data {
+			for col, text := range line {
+				row := row + 1 // start on row X
+				cell := tview.NewTableCell(text).SetExpansion(1).SetAlign(tview.AlignLeft)
 				table.SetCell(row+1, col, cell)
 			}
 		}
